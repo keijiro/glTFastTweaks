@@ -136,10 +136,11 @@ namespace GLTFastTweaks
             // textures (an image used by multiple samplers); for the common
             // single-sampler case it leaves filterMode untouched, so setting it
             // here survives.
-            if (profile.forceTrilinear)
+            var trilinear = apply && profile.forceTrilinear;
+            if (trilinear)
                 dst.filterMode = FilterMode.Trilinear;
 
-            Debug.Log($"[glTFastTweaks] {sw}x{sh}->{tw}x{th} {formatLabel} (linear={linear}, mips={wantMips}, trilinear={profile.forceTrilinear})");
+            Debug.Log($"[glTFastTweaks] {sw}x{sh}->{tw}x{th} {formatLabel} (linear={linear}, mips={wantMips}, trilinear={trilinear})");
 
             return Task.FromResult(new ImageResult(dst));
         }
