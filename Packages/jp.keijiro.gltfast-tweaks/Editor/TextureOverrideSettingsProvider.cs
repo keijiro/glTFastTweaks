@@ -20,6 +20,9 @@ namespace GLTFastTweaks
         const float kEnabled = 24, kMax = 72, kComp = 130, kFilter = 96, kBtn = 78;
         const float kRowHeight = 22;
 
+        // Set once the project has been scanned this editor session.
+        static bool s_Scanned;
+
         [SettingsProvider]
         static SettingsProvider Create()
         {
@@ -38,7 +41,13 @@ namespace GLTFastTweaks
 
         static void BuildUI(string searchContext, VisualElement root)
         {
-            var so = new SerializedObject(TextureOverrideSettings.instance);
+            var settings = TextureOverrideSettings.instance;
+
+            // Build the list on the first open of the session; the Scan button
+            // refreshes it afterwards.
+            if (!s_Scanned) { settings.Scan(); s_Scanned = true; }
+
+            var so = new SerializedObject(settings);
 
             root.style.paddingLeft = 10;
             root.style.paddingRight = 10;
@@ -90,12 +99,20 @@ namespace GLTFastTweaks
             // Shown below the list when there are no imported assets yet.
             body.Add(emptyHelp);
 
-            var reimportAll = new Button(() => ReimportAll(so.FindProperty("entries")))
-            { text = "Reimport All" };
+            // Action buttons (right-aligned).
+            var buttons = new VisualElement
+            { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.FlexEnd, marginTop = 8 } };
+
+            var scan = new Button(() => { settings.Scan(); so.Update(); RefreshList(); }) { text = "Scan for glTF Assets" };
+            scan.style.height = 28;
+            buttons.Add(scan);
+
+            var reimportAll = new Button(() => ReimportAll(so.FindProperty("entries"))) { text = "Reimport All" };
             reimportAll.style.height = 28;
-            reimportAll.style.marginTop = 8;
-            reimportAll.style.alignSelf = Align.FlexEnd;
-            body.Add(reimportAll);
+            reimportAll.style.marginLeft = 4;
+            buttons.Add(reimportAll);
+
+            body.Add(buttons);
 
             // Build the index-based source and size the list to its contents.
             void RefreshList()

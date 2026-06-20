@@ -36,7 +36,7 @@ namespace GLTFastTweaks
         };
     }
 
-    // One auto-collected entry per imported glTF asset, keyed by GUID.
+    // One entry per glTF asset found by the project scan, keyed by GUID.
     [Serializable]
     class Entry
     {
@@ -69,9 +69,27 @@ namespace GLTFastTweaks
             return entry != null && entry.overrides.enabled ? entry.overrides : defaults;
         }
 
-        // Adds or refreshes the entry for an imported asset. Must be called
-        // outside of import (via EditorApplication.delayCall).
-        public void RegisterImport(string guid, string path, string summary)
+        // Rebuild the entry list from a full project scan: add newly found glTF
+        // assets, refresh existing ones, and drop entries whose asset is gone.
+        public void Scan()
+        {
+            var found = new Dictionary<string, string>(); // guid -> path
+            foreach (var path in AssetDatabase.GetAllAssetPaths())
+            {
+                if (!path.StartsWith("Assets/") || !IsGltf(path)) continue;
+                var guid = AssetDatabase.AssetPathToGUID(path);
+                if (!string.IsNullOrEmpty(guid)) found[guid] = path;
+            }
+
+            entries.RemoveAll(e => !found.ContainsKey(e.glbGuid));
+            foreach (var kv in found)
+                Register(kv.Key, kv.Value, BuildSummary(kv.Value));
+
+            Persist();
+        }
+
+        // Adds or refreshes the entry for a glTF asset.
+        void Register(string guid, string path, string summary)
         {
             var entry = FindEntry(guid);
             if (entry == null)
@@ -93,6 +111,21 @@ namespace GLTFastTweaks
             foreach (var e in entries)
                 if (e.glbGuid == guid) return e;
             return null;
+        }
+
+        internal static bool IsGltf(string path) =>
+            path.EndsWith(".glb", StringComparison.OrdinalIgnoreCase) ||
+            path.EndsWith(".gltf", StringComparison.OrdinalIgnoreCase);
+
+        // Short summary of an asset's texture sub-assets (e.g. "3 tex: ...").
+        static string BuildSummary(string path)
+        {
+            var reps = AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
+            var lines = new List<string>();
+            foreach (var rep in reps)
+                if (rep is Texture2D t)
+                    lines.Add($"{t.width}x{t.height} {t.format}");
+            return lines.Count > 0 ? $"{lines.Count} tex: {string.Join("; ", lines)}" : null;
         }
     }
 }
