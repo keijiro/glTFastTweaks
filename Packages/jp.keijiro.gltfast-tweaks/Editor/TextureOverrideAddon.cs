@@ -44,8 +44,8 @@ namespace GLTFastTweaks
             return false;
         }
 
-        // Content-based detection: this is the only hook reached for textures
-        // embedded in a .glb (buffer view, no URI).
+        // Content-based detection: reached for image bytes sourced from a buffer
+        // view or a base64 data URI (i.e. textures embedded in a .glb or .gltf).
         public bool IsAbleToLoad(ReadOnlySpan<byte> data) => ImageFormatDetection.IsPngOrJpeg(data);
 
         public Task<ImageResult> LoadImage(
