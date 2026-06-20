@@ -1,0 +1,18 @@
+{
+  "name": "jp.keijiro.gltfast-tweaks",
+  "version": "1.0.0",
+  "displayName": "glTFast Tweaks",
+  "description": "Editor extension that adds per-asset texture import overrides (downscale, GPU compression, filter mode) to the glTFast importer.",
+  "unity": "6000.0",
+  "author": "Keijiro Takahashi",
+  "dependencies": {
+    "com.unity.cloud.gltfast": "6.19.0"
+  },
+  "changelogUrl": "https://github.com/keijiro/glTFastTweaks/blob/main/CHANGELOG.md",
+  "documentationUrl": "https://github.com/keijiro/glTFastTweaks",
+  "licensesUrl": "https://github.com/keijiro/glTFastTweaks/blob/main/LICENSE",
+  "license": "Unlicense",
+  "_upm": {
+    "changelog": "Initial release."
+  }
+}
