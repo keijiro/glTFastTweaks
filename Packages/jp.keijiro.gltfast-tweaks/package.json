@@ -1,6 +1,6 @@
 {
   "name": "jp.keijiro.gltfast-tweaks",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "displayName": "glTFast Tweaks",
   "description": "Editor extension that adds per-asset texture import overrides (downscale, GPU compression, filter mode) to the glTFast importer.",
   "unity": "6000.0",
@@ -13,6 +13,6 @@
   "licensesUrl": "https://github.com/keijiro/glTFastTweaks/blob/main/LICENSE",
   "license": "Unlicense",
   "_upm": {
-    "changelog": "<b>Added</b><br>- Show each asset's directory path next to its file name.<br><br><b>Changed</b><br>- Narrowed the Size, Compression, and Filter columns.<br><br><b>Removed</b><br>- Removed console logging, the empty-state hint, and per-row tooltips."
+    "changelog": "<b>Fixed</b><br>- Fixed compile errors with glTFast 7.0's assembly and API renames.<br><br><b>Changed</b><br>- Referenced the glTFast assembly by GUID to survive the rename.<br>- Raised the glTFast dependency to 6.20.0."
   }
 }
