@@ -6,7 +6,7 @@
   "unity": "6000.0",
   "author": "Keijiro Takahashi",
   "dependencies": {
-    "com.unity.cloud.gltfast": "6.19.0"
+    "com.unity.cloud.gltfast": "6.20.0"
   },
   "changelogUrl": "https://github.com/keijiro/glTFastTweaks/blob/main/CHANGELOG.md",
   "documentationUrl": "https://github.com/keijiro/glTFastTweaks",
