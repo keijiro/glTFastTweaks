@@ -2,7 +2,7 @@
     "name": "glTFastTweaks.Editor",
     "rootNamespace": "GLTFastTweaks",
     "references": [
-        "glTFast",
+        "GUID:a42927d1d4a3b4cda9b076a7adecb9cc",
         "Unity.Collections"
     ],
     "includePlatforms": [
@@ -14,6 +14,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.cloud.gltfast",
+            "expression": "7.0.0-exp.1",
+            "define": "GLTFAST_7_OR_NEWER"
+        }
+    ],
     "noEngineReferences": false
 }

@@ -1,12 +1,24 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast;
-using GLTFast.Addons;
-using GLTFast.Schema;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
+
+// glTFast 7.0 renamed the assembly, the namespaces and a few API members. The
+// assembly is referenced by GUID (stable across the rename) and the remaining
+// differences are bridged by these aliases.
+#if GLTFAST_7_OR_NEWER
+using Unity.Cloud.Gltfast;
+using Unity.Cloud.Gltfast.Addons;
+using GltfImportTarget = Unity.Cloud.Gltfast.GltfImport;
+using GltfTexture = Unity.Cloud.Gltfast.Objects.Texture;
+#else
+using GLTFast;
+using GLTFast.Addons;
+using GltfImportTarget = GLTFast.GltfImportBase;
+using GltfTexture = GLTFast.Schema.TextureBase;
+#endif
 
 namespace GLTFastTweaks
 {
@@ -29,7 +41,7 @@ namespace GLTFastTweaks
         // --- ImportAddonInstance -------------------------------------------
         public override bool SupportsGltfExtension(string extensionName) => false;
 
-        public override void Inject(GltfImportBase gltfImport) => gltfImport.AddImportAddonInstance(this);
+        public override void Inject(GltfImportTarget gltfImport) => gltfImport.AddImportAddonInstance(this);
 
         public override void Inject(IInstantiator instantiator) { }
 
@@ -38,7 +50,7 @@ namespace GLTFastTweaks
         // --- ITextureImageLoader -------------------------------------------
 
         // We do not add support for any glTF texture extension.
-        public bool IsAbleToLoad(TextureBase texture, out int imageIndex)
+        public bool IsAbleToLoad(GltfTexture texture, out int imageIndex)
         {
             imageIndex = -1;
             return false;
@@ -48,7 +60,12 @@ namespace GLTFastTweaks
         // view or a base64 data URI (i.e. textures embedded in a .glb or .gltf).
         public bool IsAbleToLoad(ReadOnlySpan<byte> data) => ImageFormatDetection.IsPngOrJpeg(data);
 
+        // Renamed from LoadImage in glTFast 7.0; the body is version agnostic.
+#if GLTFAST_7_OR_NEWER
+        public Task<ImageResult> LoadImageAsync(
+#else
         public Task<ImageResult> LoadImage(
+#endif
             NativeArray<byte>.ReadOnly data,
             bool linear,
             bool readable,
